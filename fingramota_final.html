@@ -749,27 +749,28 @@ function nextQuestion(){
   else{renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
 }
 
-// ── ОТПРАВКА РЕЗУЛЬТАТОВ В GOOGLE SHEETS ──
-// Вставьте сюда URL вашего Apps Script после публикации:
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVdOPMKRqmUOw_5O7k4QwJg2NESvSadCvaO6Y8Yn2grqIqGjMhW2aeMo1XK4ftzzfc/exec';
+// ── ОТПРАВКА РЕЗУЛЬТАТОВ ЧЕРЕЗ GOOGLE ФОРМУ ──
+const FORM_BASE = 'https://docs.google.com/forms/d/e/1FAIpQLSfDTMiQYy6HPyrGnzIeoTWkaje-ZT97r10A1g5CBexjUXiFRQ/viewform';
 
 function sendResults(pct, badge){
-  if(!SCRIPT_URL || SCRIPT_URL.indexOf('ВСТАВЬТЕ')===0) return;
-  const now = new Date();
-  const data = {
-    дата:        now.toLocaleDateString('ru-RU'),
-    время:       now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),
-    фио:         userData.fio,
-    организация: userData.org,
-    email:       userData.email||'—',
-    город:       userData.city||'—',
-    правильных:  correctCount,
-    всего:       questions.length,
-    процент:     pct,
-    уровень:     badge
-  };
-  const img = new Image();
-img.src = SCRIPT_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
+  // Формируем URL с предзаполненными полями
+  const url = FORM_BASE
+    + '?usp=pp_url'
+    + '&entry.5087946='    + encodeURIComponent(userData.fio)
+    + '&entry.251244337='  + encodeURIComponent(userData.org)
+    + '&entry.1514264007=' + encodeURIComponent(userData.email||'')
+    + '&entry.378736217='  + encodeURIComponent(userData.city||'')
+    + '&entry.86335222='   + encodeURIComponent(correctCount)
+    + '&entry.1741838574=' + encodeURIComponent(questions.length)
+    + '&entry.1694604952=' + encodeURIComponent(pct+'%')
+    + '&entry.39488185='   + encodeURIComponent(badge);
+
+  // Показываем кнопку и вешаем на неё ссылку
+  const btn = document.getElementById('btn-send-form');
+  if(btn){
+    btn.style.display = 'inline-flex';
+    btn.onclick = function(){ window.open(url, '_blank'); };
+  }
 }
 
 function showResults(){
