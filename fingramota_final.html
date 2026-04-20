@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Тест «Финансовая грамотность»</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Raleway:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1f3c;--gold:#c9972b;--gold-light:#e8c06a;--cream:#f8f4ed;
+  --white:#fff;--gray:#6b7280;--correct:#1a6b3a;--wrong:#8b1a1a;
+  --correct-bg:#e8f5ee;--wrong-bg:#fdf0f0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Raleway',sans-serif;background:var(--navy);min-height:100vh;overflow-x:hidden;}
+
+/* ── SPLASH ───────────────────────────── */
+#splash{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0a1628 0%,#0d1f3c 50%,#0a1628 100%);
+  position:relative;overflow:hidden;padding:32px 16px;
+}
+#splash::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 40% at 20% 30%,rgba(201,151,43,.08) 0%,transparent 70%),
+             radial-gradient(ellipse 50% 50% at 80% 70%,rgba(201,151,43,.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+.splash-ornament{
+  position:absolute;width:500px;height:500px;
+  border:1px solid rgba(201,151,43,.08);border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  animation:rotateSlow 40s linear infinite;
+}
+@keyframes rotateSlow{to{transform:translate(-50%,-50%) rotate(360deg);}}
+.splash-content{position:relative;z-index:2;text-align:center;max-width:700px;animation:fadeInUp 1.2s ease both;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.gold-line{width:70px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 18px;}
+.uni-name{font-weight:700;font-size:clamp(12px,3.2vw,15px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);line-height:1.6;margin-bottom:4px;}
+.dept-name{font-size:clamp(10px,2.5vw,13px);letter-spacing:.14em;text-transform:uppercase;color:rgba(232,192,106,.6);margin-bottom:28px;}
+.splash-divider{display:flex;align-items:center;gap:12px;margin:0 auto 22px;max-width:320px;}
+.splash-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,151,43,.5));}
+.splash-divider-line:last-child{background:linear-gradient(270deg,transparent,rgba(201,151,43,.5));}
+.splash-divider-diamond{width:7px;height:7px;background:var(--gold);transform:rotate(45deg);}
+.test-title{font-family:'Playfair Display',serif;font-size:clamp(30px,8vw,66px);font-weight:900;color:var(--white);line-height:1.05;letter-spacing:-.02em;margin-bottom:8px;}
+.test-subtitle{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,3.5vw,24px);color:var(--gold-light);margin-bottom:28px;letter-spacing:.04em;}
+.test-meta{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:36px;}
+.meta-item{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.meta-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--gold);line-height:1;}
+.meta-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.45);font-weight:500;}
+.meta-sep{width:1px;height:36px;background:rgba(201,151,43,.2);align-self:center;}
+.btn-start{
+  display:inline-flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,var(--gold) 0%,#b8851e 100%);
+  color:var(--navy);font-family:'Raleway',sans-serif;font-weight:700;
+  font-size:14px;letter-spacing:.18em;text-transform:uppercase;
+  padding:16px 40px;border:none;cursor:pointer;
+  box-shadow:0 8px 36px rgba(201,151,43,.35);transition:transform .2s,box-shadow .2s;
+}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 14px 48px rgba(201,151,43,.5);}
+
+/* ── REGISTRATION ─────────────────────── */
+#reg-screen{
+  display:none;min-height:100vh;align-items:center;justify-content:center;
+  background:var(--cream);padding:32px 16px;flex-direction:column;
+}
+.reg-card{background:var(--white);padding:44px 36px;max-width:480px;width:100%;box-shadow:0 20px 70px rgba(13,31,60,.12);}
+.reg-card-header{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.reg-card-sub{font-size:13px;color:var(--gray);margin-bottom:28px;line-height:1.5;}
+.reg-field{margin-bottom:18px;}
+.reg-label{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--navy);margin-bottom:6px;opacity:.7;}
+.reg-input{
+  width:100%;border:0;border-bottom:2px solid #d1d5db;
+  padding:10px 4px;font-family:'Raleway',sans-serif;font-size:15px;
+  color:var(--navy);outline:none;background:transparent;transition:border-color .2s;
+}
+.reg-input:focus{border-color:var(--gold);}
+.reg-input::placeholder{color:#adb5bd;}
+.btn-go{
+  width:100%;background:var(--navy);color:var(--white);border:none;
+  padding:14px;font-family:'Raleway',sans-serif;font-weight:700;
+  font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+  cursor:pointer;margin-top:8px;transition:background .2s;
+}
+.btn-go:hover{background:#1a3356;}
+
+/* ── QUIZ ─────────────────────────────── */
+#quiz-screen{display:none;min-height:100vh;background:var(--cream);}
+.quiz-header{
+  background:var(--navy);padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.3);
+}
+.quiz-header-title{font-family:'Playfair Display',serif;font-size:15px;color:var(--white);font-weight:700;}
+.quiz-progress-info{font-size:12px;font-weight:600;color:var(--gold-light);letter-spacing:.08em;}
+.progress-bar-wrap{width:100%;height:4px;background:rgba(255,255,255,.1);position:absolute;bottom:0;left:0;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width .5s ease;width:0%;}
+.quiz-body{max-width:680px;margin:0 auto;padding:20px 14px 16px;}
+
+.question-card{
+  background:var(--white);box-shadow:0 6px 30px rgba(13,31,60,.08);
+  padding:22px 20px 18px;margin-bottom:14px;
+  border-top:4px solid var(--gold);animation:slideIn .35s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.question-num{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.question-text{font-size:clamp(14px,3.5vw,17px);font-weight:700;color:var(--navy);line-height:1.5;margin-bottom:18px;}
+.options-list{display:flex;flex-direction:column;gap:9px;}
+.option-btn{
+  display:flex;align-items:flex-start;gap:12px;
+  background:transparent;border:1.5px solid #e2e8f0;
+  padding:12px 14px;cursor:pointer;text-align:left;
+  font-family:'Raleway',sans-serif;font-size:clamp(13px,3.2vw,15px);
+  color:#374151;line-height:1.45;transition:border-color .2s,background .2s;width:100%;
+}
+.option-btn:hover:not(:disabled){border-color:var(--navy);background:#f0f4ff;}
+.option-btn:disabled{cursor:default;}
+.option-letter{
+  width:26px;height:26px;min-width:26px;border:1.5px solid #d1d5db;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:var(--gray);transition:all .2s;margin-top:1px;
+}
+.option-btn.correct{background:var(--correct-bg);border-color:var(--correct);}
+.option-btn.correct .option-letter{background:var(--correct);border-color:var(--correct);color:#fff;}
+.option-btn.wrong{background:var(--wrong-bg);border-color:var(--wrong);}
+.option-btn.wrong .option-letter{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.option-btn.reveal-correct{background:var(--correct-bg);border-color:var(--correct);opacity:.8;}
+.explanation-box{
+  margin-top:14px;padding:12px 16px;background:#f8f9ff;
+  border-left:3px solid var(--navy);font-size:13px;color:#374151;
+  line-height:1.55;display:none;
+}
+.explanation-box.show{display:block;}
+.quiz-nav{display:flex;justify-content:flex-end;margin-top:10px;}
+.btn-next{
+  background:var(--navy);color:var(--white);border:none;
+  padding:13px 32px;font-family:'Raleway',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  cursor:pointer;display:none;transition:background .2s;align-items:center;gap:8px;
+}
+.btn-next.show{display:inline-flex;}
+.btn-next:hover{background:#1a3356;}
+
+/* ── RESULTS ──────────────────────────── */
+#result-screen{display:none;min-height:100vh;background:var(--cream);padding:48px 16px;}
+.result-card{max-width:600px;margin:0 auto;background:var(--white);box-shadow:0 20px 70px rgba(13,31,60,.12);padding:48px 36px;text-align:center;}
+.result-icon{font-size:48px;margin-bottom:12px;}
+.result-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--navy);margin-bottom:6px;}
+.result-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--gold);margin-bottom:24px;}
+.score-big{font-family:'Playfair Display',serif;font-size:70px;font-weight:900;color:var(--navy);line-height:1;margin-bottom:4px;}
+.score-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gray);margin-bottom:24px;}
+.score-bar-outer{width:100%;height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden;margin-bottom:28px;}
+.score-bar-inner{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:5px;transition:width 1.5s ease;width:0%;}
+.level-badge{display:inline-block;padding:7px 22px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:12px;}
+.level-text{font-size:14px;color:var(--gray);line-height:1.6;margin-bottom:32px;}
+.result-stats{display:flex;justify-content:center;gap:32px;margin-bottom:36px;flex-wrap:wrap;}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;line-height:1;}
+.stat-num.green{color:var(--correct);}
+.stat-num.red{color:var(--wrong);}
+.stat-lbl{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--gray);margin-top:3px;}
+.btn-cert{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--gold) 0%,#b8851e 100%);
+  color:var(--navy);font-family:'Raleway',sans-serif;font-weight:700;
+  font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+  padding:14px 36px;border:none;cursor:pointer;
+  box-shadow:0 8px 28px rgba(201,151,43,.4);transition:transform .2s;
+}
+.btn-cert:hover{transform:translateY(-2px);}
+
+/* ── CERTIFICATE ─────────────────────── */
+#cert-screen{
+  display:none;min-height:100vh;background:#2a1f0e;
+  padding:40px 12px;align-items:center;justify-content:center;flex-direction:column;
+}
+.cert-wrap{max-width:760px;width:100%;}
+.certificate{
+  background:var(--cream);border:2px solid var(--gold);
+  padding:clamp(28px,5vw,56px) clamp(20px,5vw,60px);
+  position:relative;box-shadow:0 28px 90px rgba(0,0,0,.4),inset 0 0 0 14px rgba(201,151,43,.07);
+  text-align:center;overflow:hidden;
+}
+.certificate::before,.certificate::after{
+  content:'';position:absolute;inset:7px;
+  border:1px solid rgba(201,151,43,.28);pointer-events:none;
+}
+.certificate::after{inset:14px;border:.5px solid rgba(201,151,43,.13);}
+.cert-corner{position:absolute;width:52px;height:52px;border-color:var(--gold);border-style:solid;opacity:.55;}
+.cert-corner.tl{top:18px;left:18px;border-width:2px 0 0 2px;}
+.cert-corner.tr{top:18px;right:18px;border-width:2px 2px 0 0;}
+.cert-corner.bl{bottom:18px;left:18px;border-width:0 0 2px 2px;}
+.cert-corner.br{bottom:18px;right:18px;border-width:0 2px 2px 0;}
+.cert-bg-pattern{position:absolute;inset:0;background-image:radial-gradient(circle at 20% 20%,rgba(201,151,43,.05) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(201,151,43,.05) 0%,transparent 50%);pointer-events:none;}
+.cert-content{position:relative;z-index:2;}
+
+/* Реалистичная шапочка выпускника SVG */
+.cert-emblem{margin-bottom:8px;display:flex;justify-content:center;}
+
+.cert-uni{
+  font-family:'Raleway',sans-serif;font-weight:800;
+  font-size:clamp(10px,2.2vw,14px);letter-spacing:.18em;text-transform:uppercase;
+  color:#0d2a5e;line-height:1.65;margin-bottom:3px;
+}
+.cert-dept{
+  font-family:'Raleway',sans-serif;font-weight:600;
+  font-size:clamp(9px,1.8vw,12px);letter-spacing:.16em;text-transform:uppercase;
+  color:#1a3a6b;margin-bottom:18px;opacity:.85;
+}
+.cert-divider{display:flex;align-items:center;gap:10px;margin:0 auto 18px;max-width:320px;}
+.cert-div-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold));}
+.cert-div-line:last-child{background:linear-gradient(270deg,transparent,var(--gold));}
+.cert-div-diamond{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);}
+.cert-heading{
+  font-family:'Raleway',sans-serif;font-weight:800;
+  font-size:clamp(11px,2vw,14px);letter-spacing:.28em;text-transform:uppercase;
+  color:#0d1f3c;margin-bottom:4px;
+}
+.cert-title-main{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,5.5vw,40px);font-weight:900;
+  color:#0a1830;line-height:1.15;margin-bottom:22px;
+}
+.cert-awarded{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(13px,2.5vw,16px);color:#444;margin-bottom:6px;}
+.cert-name{
+  font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,38px);
+  font-weight:700;color:#0a1830;margin-bottom:4px;letter-spacing:-.01em;
+  border-bottom:1.5px solid var(--gold);padding-bottom:10px;
+  display:inline-block;min-width:min(280px,90%);
+}
+.cert-score-line{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(14px,2.5vw,17px);color:#444;margin:16px 0 4px;}
+.cert-score-num{font-family:'Playfair Display',serif;font-size:clamp(22px,4vw,30px);font-weight:900;color:var(--gold);}
+.cert-level{font-size:clamp(10px,1.8vw,12px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#0d1f3c;margin-bottom:22px;opacity:.75;}
+.cert-footer{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-top:28px;padding-top:16px;border-top:1px solid rgba(201,151,43,.3);
+  flex-wrap:wrap;gap:12px;
+}
+.cert-date-block{text-align:left;}
+.cert-date-label{font-size:clamp(8px,1.5vw,10px);letter-spacing:.18em;text-transform:uppercase;color:rgba(13,31,60,.5);margin-bottom:2px;}
+.cert-date-val{font-family:'Raleway',sans-serif;font-weight:700;font-size:clamp(12px,2.2vw,14px);color:#0d1f3c;}
+.cert-seal-circle{
+  width:clamp(60px,10vw,76px);height:clamp(60px,10vw,76px);
+  border:2px solid var(--gold);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--gold);font-size:clamp(7px,1.3vw,9px);font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;line-height:1.4;
+  background:rgba(201,151,43,.06);text-align:center;
+}
+.cert-actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+.btn-print{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--navy);color:var(--white);border:none;
+  padding:13px 28px;font-family:'Raleway',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:.13em;text-transform:uppercase;cursor:pointer;
+}
+.btn-print:hover{background:#1a3356;}
+.btn-restart{
+  display:inline-flex;align-items:center;gap:7px;
+  background:transparent;color:rgba(255,255,255,.7);
+  border:1px solid rgba(255,255,255,.3);
+  padding:13px 28px;font-family:'Raleway',sans-serif;font-weight:600;
+  font-size:12px;letter-spacing:.13em;text-transform:uppercase;cursor:pointer;transition:all .2s;
+}
+.btn-restart:hover{color:#fff;border-color:rgba(255,255,255,.7);}
+
+@media(max-width:480px){
+  .cert-footer{flex-direction:column;align-items:center;text-align:center;}
+  .cert-date-block{text-align:center;}
+}
+@media print{
+  body>*:not(#cert-screen){display:none!important;}
+  #cert-screen{display:flex!important;background:#fff;padding:10px;}
+  .cert-actions{display:none!important;}
+  .certificate{box-shadow:none;border:2px solid #c9972b;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SPLASH ══════════════════════════════════════════════ -->
+<div id="splash">
+  <div class="splash-ornament"></div>
+  <div class="splash-content">
+    <div class="gold-line"></div>
+    <div class="uni-name">Рязанский институт (филиал)<br>Московского политехнического университета</div>
+    <div class="dept-name">Кафедра инженерного бизнеса и менеджмента</div>
+    <div class="splash-divider">
+      <div class="splash-divider-line"></div>
+      <div class="splash-divider-diamond"></div>
+      <div class="splash-divider-line"></div>
+    </div>
+    <div class="test-title">Финансовая<br>грамотность</div>
+    <div class="test-subtitle">Проверьте уровень своих знаний</div>
+    <div class="test-meta">
+      <div class="meta-item"><span class="meta-num">50</span><span class="meta-label">вопросов</span></div>
+      <div class="meta-sep"></div>
+      <div class="meta-item"><span class="meta-num">4</span><span class="meta-label">варианта</span></div>
+      <div class="meta-sep"></div>
+      <div class="meta-item"><span class="meta-num">∞</span><span class="meta-label">бесплатно</span></div>
+    </div>
+    <button class="btn-start" onclick="showReg()">Начать тестирование →</button>
+  </div>
+</div>
+
+<!-- ══ REGISTRATION ════════════════════════════════════════ -->
+<div id="reg-screen">
+  <div class="reg-card">
+    <div class="reg-card-header">Регистрация</div>
+    <div class="reg-card-sub">Данные будут указаны на сертификате по итогам тестирования</div>
+    <div class="reg-field">
+      <label class="reg-label">Фамилия Имя Отчество *</label>
+      <input id="f-fio" class="reg-input" placeholder="Иванов Иван Иванович" maxlength="80">
+    </div>
+    <div class="reg-field">
+      <label class="reg-label">Наименование образовательной организации *</label>
+      <input id="f-org" class="reg-input" placeholder="Рязанский институт МПУ" maxlength="120">
+    </div>
+    <div class="reg-field">
+      <label class="reg-label">Электронная почта</label>
+      <input id="f-email" class="reg-input" type="email" placeholder="example@mail.ru" maxlength="80">
+    </div>
+    <div class="reg-field">
+      <label class="reg-label">Город проживания</label>
+      <input id="f-city" class="reg-input" placeholder="Рязань" maxlength="60">
+    </div>
+    <button class="btn-go" onclick="startQuiz()">Перейти к тесту →</button>
+  </div>
+</div>
+
+<!-- ══ QUIZ ════════════════════════════════════════════════ -->
+<div id="quiz-screen">
+  <div class="quiz-header">
+    <div class="quiz-header-title">Финансовая грамотность</div>
+    <div class="quiz-progress-info" id="progress-text">1 / 50</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar"></div></div>
+  </div>
+  <div class="quiz-body">
+    <div class="question-card" id="question-card">
+      <div class="question-num" id="q-num"></div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options-list" id="q-options"></div>
+      <div class="explanation-box" id="q-explanation"></div>
+    </div>
+    <div class="quiz-nav">
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Следующий →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ═════════════════════════════════════════════ -->
+<div id="result-screen">
+  <div class="result-card">
+    <div class="result-icon" id="result-icon">🏆</div>
+    <div class="result-title">Тест завершён!</div>
+    <div class="result-name" id="result-name-display"></div>
+    <div class="score-big" id="score-pct">0%</div>
+    <div class="score-label">правильных ответов</div>
+    <div class="score-bar-outer"><div class="score-bar-inner" id="score-bar"></div></div>
+    <div class="result-stats">
+      <div class="stat-item"><div class="stat-num green" id="stat-correct">0</div><div class="stat-lbl">правильно</div></div>
+      <div class="stat-item"><div class="stat-num red" id="stat-wrong">0</div><div class="stat-lbl">ошибок</div></div>
+      <div class="stat-item"><div class="stat-num" style="color:var(--navy)" id="stat-total">50</div><div class="stat-lbl">всего</div></div>
+    </div>
+    <div class="level-badge" id="level-badge"></div>
+    <div class="level-text" id="level-text"></div>
+    <button class="btn-cert" onclick="showCertificate()">🎓 Получить сертификат</button>
+  </div>
+</div>
+
+<!-- ══ CERTIFICATE ══════════════════════════════════════════ -->
+<div id="cert-screen">
+  <div class="cert-wrap">
+    <div class="certificate">
+      <div class="cert-corner tl"></div><div class="cert-corner tr"></div>
+      <div class="cert-corner bl"></div><div class="cert-corner br"></div>
+      <div class="cert-bg-pattern"></div>
+      <div class="cert-content">
+        <!-- Реалистичная шапочка выпускника -->
+        <div class="cert-emblem">
+          <svg width="72" height="62" viewBox="0 0 72 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Доска мантии (мантия) -->
+            <polygon points="36,4 68,18 36,32 4,18" fill="#1B3A6B" stroke="#C9972B" stroke-width="1.5"/>
+            <!-- Верхняя поверхность (блик) -->
+            <polygon points="36,4 68,18 36,21 4,18" fill="#2a5298" opacity="0.5"/>
+            <!-- Золотая кайма -->
+            <polygon points="36,4 68,18 36,32 4,18" fill="none" stroke="#E8C06A" stroke-width="0.8" opacity="0.6"/>
+            <!-- Тулья (квадрат сверху) -->
+            <rect x="25" y="1" width="22" height="6" rx="1" fill="#0d1f3c" stroke="#C9972B" stroke-width="1"/>
+            <!-- Значок центр шапки -->
+            <rect x="34" y="2.5" width="4" height="3" rx="0.5" fill="#C9972B"/>
+            <!-- Кисточка - нить -->
+            <line x1="64" y1="18" x2="64" y2="36" stroke="#C9972B" stroke-width="1.8"/>
+            <line x1="64" y1="36" x2="60" y2="48" stroke="#C9972B" stroke-width="1.5"/>
+            <!-- Кисточка - пучок -->
+            <ellipse cx="60" cy="50" rx="4" ry="3" fill="#C9972B"/>
+            <line x1="57" y1="50" x2="55" y2="56" stroke="#C9972B" stroke-width="1"/>
+            <line x1="59" y1="52" x2="58" y2="58" stroke="#C9972B" stroke-width="1"/>
+            <line x1="61" y1="52" x2="62" y2="58" stroke="#C9972B" stroke-width="1"/>
+            <line x1="63" y1="50" x2="65" y2="56" stroke="#C9972B" stroke-width="1"/>
+            <!-- Тень под шапкой -->
+            <ellipse cx="36" cy="32" rx="18" ry="3" fill="rgba(0,0,0,0.12)"/>
+            <!-- Мантия/основание -->
+            <path d="M18,28 Q18,52 36,56 Q54,52 54,28" fill="#1B3A6B" stroke="#C9972B" stroke-width="1"/>
+            <path d="M18,28 Q18,52 36,56 Q54,52 54,28" fill="none" stroke="#E8C06A" stroke-width="0.6" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="cert-uni">Рязанский институт (филиал) Московского политехнического университета</div>
+        <div class="cert-dept">Кафедра инженерного бизнеса и менеджмента</div>
+        <div class="cert-divider">
+          <div class="cert-div-line"></div><div class="cert-div-diamond"></div><div class="cert-div-line"></div>
+        </div>
+        <div class="cert-heading">СЕРТИФИКАТ</div>
+        <div class="cert-title-main">участника теста<br>«Финансовая грамотность»</div>
+        <div class="cert-awarded">настоящим подтверждает, что</div>
+        <div class="cert-name" id="cert-name-display">—</div>
+        <div class="cert-score-line">успешно прошёл(а) тестирование и набрал(а)</div>
+        <div class="cert-score-num" id="cert-score-display">0 из 50 (0%)</div>
+        <div class="cert-level" id="cert-level-display"></div>
+        <div class="cert-footer">
+          <div class="cert-date-block">
+            <div class="cert-date-label">Дата выдачи</div>
+            <div class="cert-date-val" id="cert-date"></div>
+          </div>
+          <div>
+            <div class="cert-seal-circle">РИ МПУ<br>Рязань<br>★</div>
+          </div>
+          <div style="text-align:right">
+            <div class="cert-date-label">Статус</div>
+            <div class="cert-date-val" id="cert-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cert-actions">
+      <button class="btn-print" onclick="window.print()">🖨 Распечатать</button>
+      <button class="btn-restart" onclick="restartQuiz()">↺ Пройти заново</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  50 ВОПРОСОВ — правильные ответы равномерно распределены
+//  по позициям: ~12-13 на каждую из А/Б/В/Г
+//  correct: 0=А, 1=Б, 2=В, 3=Г
+// ══════════════════════════════════════════════════════════
+const questions = [
+{q:"1. Что такое личный финансовый бюджет?",
+ opts:["План доходов и расходов на определённый период","Документ для подачи в налоговую инспекцию","Банковский вклад на длительный срок","Список покупок на текущий месяц"],
+ correct:0,exp:"Личный бюджет — план доходов и расходов, помогающий осознанно управлять деньгами."},
+
+{q:"2. Правило «заплати сначала себе» означает:",
+ opts:["Первым делом оплачивать коммунальные услуги","Откладывать часть дохода на сбережения сразу после получения зарплаты","Тратить деньги на удовольствия до оплаты счетов","Брать кредит на личные нужды"],
+ correct:1,exp:"Принцип pay yourself first: часть дохода переводится на сберегательный счёт до любых других трат."},
+
+{q:"3. Рекомендуемый размер «финансовой подушки безопасности»:",
+ opts:["Ровно 1 годовой доход","10% от ежемесячного дохода","3–6 месячных расходов","1 месячный расход"],
+ correct:2,exp:"Эксперты рекомендуют держать в ликвидных активах сумму на 3–6 месяцев обычных расходов."},
+
+{q:"4. Что такое «правило 50/30/20» в планировании бюджета?",
+ opts:["Соотношение акций, облигаций и золота в портфеле","Метод конвертов для наличных денег","50% — кредиты, 30% — жильё, 20% — еда","50% — обязательные расходы, 30% — желания, 20% — сбережения и долги"],
+ correct:3,exp:"50% — базовые нужды, 30% — личные желания, 20% — сбережения и погашение долгов."},
+
+{q:"5. Система страхования вкладов в России гарантирует возврат суммы до:",
+ opts:["1 400 000 рублей","500 000 рублей","700 000 рублей","3 000 000 рублей"],
+ correct:0,exp:"АСВ гарантирует возмещение до 1 400 000 руб. на одного вкладчика в одном банке."},
+
+{q:"6. Что означает «капитализация процентов» по вкладу?",
+ opts:["Досрочное закрытие вклада","Начисление процентов на уже накопленные проценты","Перевод вклада в другой банк","Конвертация вклада в иностранную валюту"],
+ correct:1,exp:"Капитализация — начисление процентов не только на первоначальную сумму, но и на ранее накопленные проценты."},
+
+{q:"7. Полная стоимость кредита (ПСК) включает:",
+ opts:["Только основной долг","Штрафы за просрочку платежей","Процентную ставку и все обязательные платежи (комиссии, страховку)","Только номинальную процентную ставку"],
+ correct:2,exp:"ПСК — реальная стоимость кредита. Позволяет сравнивать предложения разных банков."},
+
+{q:"8. Какой банковский продукт позволяет частично снимать и пополнять деньги без потери начисленных процентов?",
+ opts:["Срочный вклад без пополнения","Вклад «до востребования»","Сберегательный сертификат","Накопительный счёт"],
+ correct:3,exp:"Накопительный счёт — гибкий продукт: допускает снятия и пополнения, проценты продолжают начисляться на фактический остаток. Именно так называется этот инструмент в российских банках."},
+
+{q:"9. Диверсификация инвестиционного портфеля означает:",
+ opts:["Распределение инвестиций между различными активами для снижения риска","Вложение всех средств в один актив для максимальной прибыли","Продажу ценных бумаг при падении рынка","Инвестирование только в государственные облигации"],
+ correct:0,exp:"Диверсификация снижает риск: убытки по одному активу компенсируются доходом по другим."},
+
+{q:"10. Облигация — это:",
+ opts:["Доля в собственности компании","Долговая ценная бумага с обязательством выплатить номинал и купонный доход","Пай в инвестиционном фонде","Производный финансовый инструмент"],
+ correct:1,exp:"Облигация — долговой инструмент. Покупатель кредитует эмитента и получает купонный доход плюс возврат номинала."},
+
+{q:"11. Индивидуальный инвестиционный счёт (ИИС) даёт:",
+ opts:["Гарантированную доходность 13% годовых","Страховку от убытков на фондовом рынке","Налоговый вычет или освобождение дохода от НДФЛ при соблюдении условий","Возможность торговать без брокера"],
+ correct:2,exp:"ИИС тип А — вычет 13% от взноса (до 52 000 руб./год), тип Б — освобождение прибыли от НДФЛ. Условие: не закрывать 3 года."},
+
+{q:"12. Реальная процентная ставка по вкладу рассчитывается как:",
+ opts:["Номинальная ставка + инфляция","Инфляция / номинальная ставка","Номинальная ставка × инфляция","Номинальная ставка − инфляция"],
+ correct:3,exp:"По формуле Фишера: реальная ставка ≈ номинальная ставка − инфляция. Если инфляция выше ставки — реальный доход отрицательный."},
+
+{q:"13. Стандартная ставка НДФЛ для резидентов России:",
+ opts:["13% (15% с дохода свыше 5 млн руб. в год)","6%","10%","20%"],
+ correct:0,exp:"НДФЛ — 13% при доходе до 5 млн руб. С 2025 года введена прогрессивная шкала."},
+
+{q:"14. Максимальная база имущественного вычета при покупке жилья:",
+ opts:["1 000 000 рублей","2 000 000 рублей","3 000 000 рублей","5 000 000 рублей"],
+ correct:1,exp:"База вычета при покупке жилья — 2 млн руб. Максимальный возврат НДФЛ — 260 000 руб."},
+
+{q:"15. Самозанятые платят налог НПД по ставкам:",
+ opts:["13% при любых доходах","6% при любых доходах","4% с доходов от физлиц и 6% с доходов от организаций","20%"],
+ correct:2,exp:"НПД: 4% с доходов от физлиц, 6% — от юрлиц и ИП. Лимит дохода — 2,4 млн руб./год."},
+
+{q:"16. Что такое страховая премия?",
+ opts:["Выплата страховщика при наступлении страхового случая","Прибыль страховой компании","Сумма, на которую застраховано имущество","Плата страхователя за страховую защиту"],
+ correct:3,exp:"Страховая премия (взнос) — плата клиента страховщику за предоставляемую страховую защиту."},
+
+{q:"17. ОСАГО — это:",
+ opts:["Обязательное страхование гражданской ответственности владельцев ТС","Добровольное страхование автомобиля от угона и ущерба (каско)","Страхование жизни водителя","Страхование пассажиров общественного транспорта"],
+ correct:0,exp:"ОСАГО — обязательная страховка ответственности. При ДТП покрывает ущерб потерпевшей стороне."},
+
+{q:"18. «Правило 72» в финансах применяется для:",
+ opts:["Расчёта налогового вычета","Приблизительного расчёта времени удвоения капитала: 72 / ставка доходности","Оценки уровня инфляции","Норматива достаточности капитала банков"],
+ correct:1,exp:"Правило 72: разделите 72 на годовую ставку — получите лет до удвоения суммы. При 8% — 9 лет."},
+
+{q:"19. Пенсионный возраст для мужчин в России после реформы 2019 года:",
+ opts:["60 лет","63 года","65 лет","67 лет"],
+ correct:2,exp:"После реформы 2019 года: мужчины — 65 лет, женщины — 60 лет (с переходным периодом до 2028 г.)."},
+
+{q:"20. Ликвидность актива — это:",
+ opts:["Годовая доходность вложений","Степень риска вложений","Налогообложение дохода от актива","Способность актива быть быстро проданным по рыночной цене без существенных потерь"],
+ correct:3,exp:"Ликвидность — скорость конвертации актива в деньги. Наличные абсолютно ликвидны, недвижимость — низколиквидна."},
+
+{q:"21. Концепция «временной стоимости денег» означает, что:",
+ opts:["Деньги сегодня ценнее, чем та же сумма в будущем","Деньги в будущем всегда ценнее сегодняшних","Ценность денег зависит только от инфляции","Деньги не теряют ценности со временем"],
+ correct:0,exp:"TVM: рубль сегодня ценнее, чем рубль завтра — его можно инвестировать и получить доход."},
+
+{q:"22. Система быстрых платежей (СБП) позволяет:",
+ opts:["Переводить деньги только внутри одного банка","Мгновенно переводить средства между счетами в разных банках по номеру телефона","Снимать наличные без комиссии в любом банкомате","Оплачивать налоги без комиссии"],
+ correct:1,exp:"СБП — межбанковская система переводов. Переводы до 100 000 руб./мес. между физлицами в большинстве банков бесплатны."},
+
+{q:"23. Франшиза в договоре страхования — это:",
+ opts:["Сеть агентских офисов страховщика","Скидка на полис при годовой оплате","Часть убытка, которую страхователь возмещает самостоятельно","Условие автоматической пролонгации договора"],
+ correct:2,exp:"Франшиза — часть ущерба, которую несёт сам страхователь. Полис с франшизой дешевле, но при небольших убытках выплаты не будет."},
+
+{q:"24. Цифровой рубль — это:",
+ opts:["Безналичный перевод через СБП","Электронные деньги в кошельке ЮMoney","Криптовалюта частных компаний","Третья форма рубля, выпускаемая Банком России в цифровом виде"],
+ correct:3,exp:"Цифровой рубль — CBDC (цифровая валюта ЦБ). Выпускается Банком России, хранится на его платформе, не является криптовалютой."},
+
+{q:"25. ПИФ (паевой инвестиционный фонд) — это:",
+ opts:["Форма коллективных инвестиций: управляющая компания вкладывает средства пайщиков в ценные бумаги","Государственный резервный фонд","Банковский вклад с повышенной ставкой","Фонд страхования вкладов АСВ"],
+ correct:0,exp:"ПИФ объединяет средства многих инвесторов. УК формирует диверсифицированный портфель. Пайщик владеет пропорциональной долей."},
+
+{q:"26. Финансовая пирамида — это схема, при которой:",
+ opts:["Доходы формируются из прибыли реальной деятельности","Выплаты производятся преимущественно из взносов новых участников","Государство гарантирует доход выше рыночного","Управляющая компания работает под лицензией ЦБ"],
+ correct:1,exp:"Пирамида не создаёт реального продукта. Деньги ранних участников выплачиваются из взносов новых. Крах неизбежен."},
+
+{q:"27. Что такое фишинг?",
+ opts:["Вид биржевой торговли","Технология бесконтактной оплаты","Мошенническая схема кражи персональных данных через поддельные сайты и письма","Способ обмена криптовалюты"],
+ correct:2,exp:"Фишинг — создание сайтов-клонов банков или писем с просьбой ввести реквизиты карты. Никогда не переходите по ссылкам из подозрительных писем."},
+
+{q:"28. Какой признак НЕ характерен для финансовой пирамиды?",
+ opts:["Гарантированная сверхвысокая доходность","Давление — «действуйте срочно, предложение ограничено»","Непрозрачная бизнес-модель и отсутствие отчётности","Наличие действующей лицензии Банка России"],
+ correct:3,exp:"Лицензия ЦБ — признак легального участника рынка. Пирамиды, как правило, работают без неё. Проверяйте на cbr.ru."},
+
+{q:"29. Предложение гарантированной доходности 50% в месяц — это:",
+ opts:["Финансовое мошенничество или финансовая пирамида","Уникальная инвестиционная возможность","Предложение надёжного НПФ","Государственная программа поддержки граждан"],
+ correct:0,exp:"50% в месяц = 600% годовых. Это невозможно на легальном рынке. Если доходность невероятная — это мошенничество."},
+
+{q:"30. При выявлении финансовой пирамиды следует обратиться:",
+ opts:["В Министерство культуры","В Банк России и/или правоохранительные органы","В Роспотребнадзор","В Федеральное казначейство"],
+ correct:1,exp:"Банк России ведёт реестр пирамид и рассматривает жалобы на нелегальную финансовую деятельность через сайт cbr.ru."},
+
+{q:"31. Социальная инженерия в контексте финансовой безопасности — это:",
+ opts:["Государственная программа поддержки малого бизнеса","Метод финансового анализа","Психологические манипуляции с целью получения конфиденциальных данных или денег","Вид страхования от мошенников"],
+ correct:2,exp:"Социальная инженерия — манипулирование людьми для получения паролей, кодов, данных карты. Мошенники представляются сотрудниками банка, полиции, налоговой."},
+
+{q:"32. Вам звонит «сотрудник банка» и просит назвать CVC-код карты. Правильное действие:",
+ opts:["Назвать код, если он знает номер вашей карты","Уточнить имя сотрудника и назвать код","Назвать только последние 4 цифры карты","Немедленно прервать разговор и позвонить на официальный номер банка"],
+ correct:3,exp:"Настоящие сотрудники банка НИКОГДА не запрашивают CVC/CVV, ПИН-коды и одноразовые пароли. Повесьте трубку и перезвоните на номер на карте."},
+
+{q:"33. SMS с кодом для «отмены подозрительной операции» — это, скорее всего:",
+ opts:["Попытка мошенника — он инициировал операцию и ждёт этот код подтверждения","Стандартная проверка безопасности банка","Необходимость срочно ввести код на сайте банка","Реальная блокировка операции банком"],
+ correct:0,exp:"Одноразовый код нельзя называть никому. Мошенники инициируют операцию и убеждают «отменить» её, называя именно этот код."},
+
+{q:"34. Что такое скимминг?",
+ opts:["Вид фишинга через электронную почту","Считывание данных карты с помощью устройства, установленного на банкомате","Кража карты из почтового ящика","Несанкционированный перевод денег через мобильный банк"],
+ correct:1,exp:"Скимминг — установка накладок на картридер банкомата для копирования данных магнитной полосы. Используйте банкоматы в отделениях и закрывайте клавиатуру."},
+
+{q:"35. Наиболее надёжным паролем является:",
+ opts:["Дата рождения (например, 19901015)","Имя и фамилия латиницей","Случайная комбинация букв, цифр и символов длиной не менее 12 знаков","Слово «password» с заглавной буквы"],
+ correct:2,exp:"Надёжный пароль: длина ≥ 12 символов, разный регистр, цифры и спецсимволы. Не используйте личные данные."},
+
+{q:"36. При онлайн-оплате безопасно вводить данные карты, если:",
+ opts:["Сайт предлагает скидку 70% на товар","На сайте написано, что он «безопасный»","Сайт находится в первой строке поисковой выдачи","Используется защищённое соединение HTTPS и домен совпадает с официальным сайтом"],
+ correct:3,exp:"Признаки безопасного сайта: HTTPS, значок замка, совпадение домена с официальным. Не вводите данные по ссылкам из писем."},
+
+{q:"37. При утере банковской карты необходимо в первую очередь:",
+ opts:["Немедленно заблокировать карту через мобильное приложение или горячую линию банка","Подождать 3 дня — возможно, найдётся","Написать заявление в полицию через неделю","Сначала проверить баланс карты"],
+ correct:0,exp:"Немедленная блокировка минимизирует риск несанкционированных операций. В приложении это занимает несколько секунд."},
+
+{q:"38. Двухфакторная аутентификация (2FA) обеспечивает защиту, потому что:",
+ opts:["Для входа достаточно только пароля","Требует подтверждения личности двумя независимыми способами (пароль + SMS-код или приложение)","Автоматически меняет пароль каждые 30 дней","Шифрует все финансовые операции"],
+ correct:1,exp:"2FA: даже зная пароль, мошенник не войдёт без второго фактора. Включайте везде, где это возможно."},
+
+{q:"39. Что такое «вишинг»?",
+ opts:["Вид спам-рассылки по электронной почте","Кибератака на банковские серверы","Голосовое мошенничество — звонки от имени банков или госорганов с целью выманить деньги или данные","Метод взлома Wi-Fi сетей"],
+ correct:2,exp:"Вишинг (voice phishing) — мошенничество по телефону. Злоумышленники имитируют звонки от банков, ФНС, МВД. Проверяйте, звоня на официальные номера."},
+
+{q:"40. Что такое «смишинг»?",
+ opts:["Взлом аккаунта через социальные сети","Вид компьютерного вируса","Кража наличных из банкомата","Мошенничество с помощью SMS, содержащих вредоносные ссылки или ложные требования"],
+ correct:3,exp:"Смишинг (SMS phishing): рассылка SMS вида «ваша карта заблокирована» с поддельной ссылкой. Не переходите по ссылкам из SMS незнакомых номеров."},
+
+{q:"41. Опасность использования публичного Wi-Fi для банковских операций состоит в том, что:",
+ opts:["Злоумышленник может перехватить передаваемые данные (атака «человек посередине»)","Снижается скорость интернета","Банк автоматически блокирует карту","Операции облагаются дополнительной комиссией"],
+ correct:0,exp:"В публичных сетях злоумышленник может перехватить логины, пароли и данные карт. Используйте VPN или мобильный интернет."},
+
+{q:"42. Схема «ваш родственник попал в беду, срочно переведите деньги» — это:",
+ opts:["Законный вид экстренной помощи","Телефонное мошенничество, эксплуатирующее страх за близких","Государственная программа помощи семьям","Услуга банка «экстренный перевод»"],
+ correct:1,exp:"«Родственник в беде» — классическая схема мошенничества. Перезвоните родственнику напрямую перед любым переводом."},
+
+{q:"43. Какую информацию о карте нельзя сообщать никому, включая сотрудников банка?",
+ opts:["Номер карты","Имя держателя карты","CVC/CVV-код, ПИН-код и одноразовые SMS-коды","Срок действия карты"],
+ correct:2,exp:"CVC/CVV, ПИН-код и одноразовые пароли — секретные данные. Настоящий банк никогда не запрашивает их по телефону или в переписке."},
+
+{q:"44. «Кэшбэк-мошенничество» — это когда:",
+ opts:["Банк ошибочно начисляет кэшбэк","Мошенничество с использованием бонусных карт магазинов","Незаконное получение возврата товара","Жертву просят заплатить «налог» или «комиссию» для получения обещанного выигрыша или кэшбэка"],
+ correct:3,exp:"Мошенники обещают крупный кэшбэк или выигрыш, но просят сначала заплатить «комиссию». Реальные выплаты никогда не требуют предоплаты."},
+
+{q:"45. Перед переводом денег продавцу в интернете следует:",
+ opts:["Изучить отзывы, историю аккаунта и использовать безопасную сделку на платформе","Проверить только цену товара","Убедиться в наличии фотографий товара","Проверить только срок публикации объявления"],
+ correct:0,exp:"При онлайн-покупке: изучите отзывы, историю аккаунта продавца, используйте безопасную сделку. Не переводите деньги незнакомым напрямую."},
+
+{q:"46. Антивирусное ПО на смартфоне:",
+ opts:["Замедляет работу банковского приложения","Защищает от вредоносных программ, которые могут перехватить финансовые данные","Является лишним при наличии банковского приложения","Автоматически блокирует все платежи"],
+ correct:1,exp:"Вредоносное ПО может перехватывать данные банковских приложений и SMS. Регулярно обновляйте антивирус и операционную систему."},
+
+{q:"47. Предложение работы «за транзитные платежи через вашу карту» — это:",
+ opts:["Законное удалённое трудоустройство","Стандартная схема выплаты зарплаты","Использование вас в роли «дропа» — пособника в отмывании преступных денег","Налоговая оптимизация работодателя"],
+ correct:2,exp:"«Дроп» — человек, через чью карту проходят незаконные средства. Это уголовная ответственность за пособничество мошенничеству или отмыванию денег."},
+
+{q:"48. При несанкционированном списании средств с карты необходимо:",
+ opts:["Подождать неделю — возможно, деньги вернутся","Написать жалобу в социальных сетях","Попытаться связаться с получателем платежа","Немедленно заблокировать карту и подать в банк заявление об оспаривании операции"],
+ correct:3,exp:"Немедленные действия: блокировка + заявление в банк. Срок подачи претензии — 30 дней. Банк обязан провести расследование."},
+
+{q:"49. Принцип «нулевой ответственности» по банковской карте означает:",
+ opts:["Банк возмещает убытки от несанкционированных операций, если держатель своевременно уведомил банк и не нарушил правила безопасности","Держатель карты не несёт ответственности ни при каких обстоятельствах","Операции без ПИН-кода не проводятся","Карта не имеет кредитного лимита"],
+ correct:0,exp:"Банки возмещают ущерб при условии, что держатель немедленно сообщил об инциденте и соблюдал правила безопасного использования карты."},
+
+{q:"50. Какой совет повышает финансовую безопасность при онлайн-покупках?",
+ opts:["Хранить все пароли в заметках на телефоне","Завести отдельную карту с минимальным балансом специально для интернет-покупок","Использовать одинаковый пароль для всех сервисов ради удобства","Сообщать ПИН-код родственникам на случай экстренной ситуации"],
+ correct:1,exp:"Отдельная карта с небольшим балансом ограничивает потери при компрометации данных. Пополняйте её только перед конкретной покупкой."},
+
+];
+// ──────────────────────────────────────────────────────────
+let currentQ=0, correctCount=0, wrongCount=0;
+let userData={}, answered=false;
+
+function show(id){
+  ['splash','reg-screen','quiz-screen','result-screen','cert-screen'].forEach(s=>{
+    const el=document.getElementById(s);
+    el.style.display='none';
+  });
+  const t=document.getElementById(id);
+  if(id==='reg-screen'||id==='cert-screen') t.style.display='flex';
+  else t.style.display='block';
+  window.scrollTo(0,0);
+}
+
+function showReg(){show('reg-screen');}
+
+function startQuiz(){
+  const fio=document.getElementById('f-fio').value.trim();
+  const org=document.getElementById('f-org').value.trim();
+  if(!fio||!org){
+    if(!fio){document.getElementById('f-fio').style.borderColor='#c9972b';document.getElementById('f-fio').focus();}
+    else{document.getElementById('f-org').style.borderColor='#c9972b';document.getElementById('f-org').focus();}
+    return;
+  }
+  userData={fio,org,email:document.getElementById('f-email').value.trim(),city:document.getElementById('f-city').value.trim()};
+  currentQ=0;correctCount=0;wrongCount=0;
+  show('quiz-screen');renderQuestion();
+}
+
+// Тасуем массив (алгоритм Фишера-Йетса)
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// Текущий перемешанный порядок вариантов и индекс правильного
+let shuffledOpts=[], shuffledCorrect=0;
+
+function renderQuestion(){
+  answered=false;
+  const q=questions[currentQ];
+  const total=questions.length;
+  const letters=['А','Б','В','Г'];
+
+  // Перемешиваем варианты случайно при каждом показе вопроса
+  const rightText=q.opts[q.correct];           // сохраняем текст правильного
+  shuffledOpts=shuffle(q.opts);                 // случайный порядок
+  shuffledCorrect=shuffledOpts.indexOf(rightText); // новый индекс правильного
+
+  document.getElementById('q-num').textContent=`Вопрос ${currentQ+1} из ${total}`;
+  document.getElementById('progress-text').textContent=`${currentQ+1} / ${total}`;
+  document.getElementById('progress-bar').style.width=((currentQ/total)*100)+'%';
+  document.getElementById('q-text').textContent=q.q;
+  const exp=document.getElementById('q-explanation');
+  exp.textContent='';exp.classList.remove('show');
+  const btnNext=document.getElementById('btn-next');
+  btnNext.classList.remove('show');
+  const opts=document.getElementById('q-options');
+  opts.innerHTML='';
+  shuffledOpts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.onclick=()=>selectAnswer(i);
+    btn.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    opts.appendChild(btn);
+  });
+  const card=document.getElementById('question-card');
+  card.style.animation='none';void card.offsetWidth;card.style.animation='';
+}
+
+function selectAnswer(selected){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach((btn,i)=>{
+    btn.disabled=true;
+    if(i===shuffledCorrect) btn.classList.add('correct');
+    else if(i===selected&&selected!==shuffledCorrect) btn.classList.add('wrong');
+  });
+  if(selected===shuffledCorrect) correctCount++;
+  else{wrongCount++;btns[shuffledCorrect].classList.add('reveal-correct');}
+  const exp=document.getElementById('q-explanation');
+  exp.textContent=q.exp;exp.classList.add('show');
+  const btnNext=document.getElementById('btn-next');
+  btnNext.textContent=currentQ<questions.length-1?'Следующий →':'Завершить →';
+  btnNext.classList.add('show');
+  setTimeout(()=>{btnNext.scrollIntoView({behavior:'smooth',block:'nearest'});},150);
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=questions.length) showResults();
+  else{renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+}
+
+// ── ОТПРАВКА РЕЗУЛЬТАТОВ В GOOGLE SHEETS ──
+// Вставьте сюда URL вашего Apps Script после публикации:
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVdOPMKRqmUOw_5O7k4QwJg2NESvSadCvaO6Y8Yn2grqIqGjMhW2aeMo1XK4ftzzfc/exec';
+
+function sendResults(pct, badge){
+  if(!SCRIPT_URL || SCRIPT_URL.indexOf('ВСТАВЬТЕ')===0) return;
+  const now = new Date();
+  const data = {
+    дата:        now.toLocaleDateString('ru-RU'),
+    время:       now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),
+    фио:         userData.fio,
+    организация: userData.org,
+    email:       userData.email||'—',
+    город:       userData.city||'—',
+    правильных:  correctCount,
+    всего:       questions.length,
+    процент:     pct,
+    уровень:     badge
+  };
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(()=>{});
+}
+
+function showResults(){
+  show('result-screen');
+  const total=questions.length;
+  const pct=Math.round((correctCount/total)*100);
+  document.getElementById('result-name-display').textContent=userData.fio;
+  document.getElementById('stat-correct').textContent=correctCount;
+  document.getElementById('stat-wrong').textContent=wrongCount;
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('score-pct').textContent=pct+'%';
+  setTimeout(()=>{document.getElementById('score-bar').style.width=pct+'%';},200);
+  let icon,badge,text,bs;
+  if(pct>=90){icon='🏆';badge='Отличный результат';bs='background:#e8f5ee;color:#1a6b3a;';text='Превосходно! Вы обладаете высоким уровнем финансовой грамотности и безопасности.';}
+  else if(pct>=70){icon='🥇';badge='Хороший результат';bs='background:#e8f0fe;color:#1a3356;';text='Хорошая работа! У вас крепкая база знаний. Углубите отдельные темы для ещё более уверенного управления финансами.';}
+  else if(pct>=50){icon='📚';badge='Средний результат';bs='background:#fef9e7;color:#7d6008;';text='Неплохой старт! Вы знаете основы, но есть зоны роста. Изучите темы, вызвавшие затруднения, и пройдите тест снова.';}
+  else{icon='💡';badge='Есть куда расти';bs='background:#fdf0f0;color:#8b1a1a;';text='Финансовая грамотность — навык, который можно развить. Изучайте материалы и попробуйте ещё раз!';}
+  document.getElementById('result-icon').textContent=icon;
+  const lb=document.getElementById('level-badge');lb.textContent=badge;lb.style.cssText=bs;
+  document.getElementById('level-text').textContent=text;
+  sendResults(pct, badge);
+}
+
+function showCertificate(){
+  show('cert-screen');
+  const total=questions.length;
+  const pct=Math.round((correctCount/total)*100);
+  document.getElementById('cert-name-display').textContent=userData.fio;
+  document.getElementById('cert-score-display').textContent=`${correctCount} из ${total} баллов (${pct}%)`;
+  let level;
+  if(pct>=90) level='ВЫСОКИЙ УРОВЕНЬ ФИНАНСОВОЙ ГРАМОТНОСТИ';
+  else if(pct>=70) level='ХОРОШИЙ УРОВЕНЬ ФИНАНСОВОЙ ГРАМОТНОСТИ';
+  else if(pct>=50) level='БАЗОВЫЙ УРОВЕНЬ ФИНАНСОВОЙ ГРАМОТНОСТИ';
+  else level='НАЧАЛЬНЫЙ УРОВЕНЬ ФИНАНСОВОЙ ГРАМОТНОСТИ';
+  document.getElementById('cert-level-display').textContent=level;
+  const now=new Date();
+  document.getElementById('cert-date').textContent=now.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('cert-status').textContent=pct>=50?'Пройден ✓':'Участие';
+}
+
+function restartQuiz(){
+  document.getElementById('f-fio').value='';
+  document.getElementById('f-org').value='';
+  document.getElementById('f-email').value='';
+  document.getElementById('f-city').value='';
+  show('splash');
+}
+</script>
+</body>
+</html>
