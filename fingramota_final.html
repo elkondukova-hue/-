@@ -749,28 +749,35 @@ function nextQuestion(){
   else{renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
 }
 
-// ── ОТПРАВКА РЕЗУЛЬТАТОВ ЧЕРЕЗ GOOGLE ФОРМУ ──
-const FORM_BASE = 'https://docs.google.com/forms/d/e/1FAIpQLSfDTMiQYy6HPyrGnzIeoTWkaje-ZT97r10A1g5CBexjUXiFRQ/viewform';
+// ── ОТПРАВКА РЕЗУЛЬТАТОВ В GOOGLE ТАБЛИЦУ (через Apps Script) ──
+// ВНИМАНИЕ: вставьте сюда URL вашего веб-приложения Apps Script
+// (из шага 4 инструкции, ссылка вида https://script.google.com/macros/s/.../exec)
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwY0yGKGgydTed4F-yxozsUX0Fp7h2mJ-O52tSMkSSQriodWRRyU1gxts3QJ6Qq7oSzHg/exec';
 
 function sendResults(pct, badge){
-  // Формируем URL с предзаполненными полями
-  const url = FORM_BASE
-    + '?usp=pp_url'
-    + '&entry.5087946='    + encodeURIComponent(userData.fio)
-    + '&entry.251244337='  + encodeURIComponent(userData.org)
-    + '&entry.1514264007=' + encodeURIComponent(userData.email||'')
-    + '&entry.378736217='  + encodeURIComponent(userData.city||'')
-    + '&entry.86335222='   + encodeURIComponent(correctCount)
-    + '&entry.1741838574=' + encodeURIComponent(questions.length)
-    + '&entry.1694604952=' + encodeURIComponent(pct+'%')
-    + '&entry.39488185='   + encodeURIComponent(badge);
+  // Если URL не настроен — тихо выходим
+  if(!SHEETS_URL || SHEETS_URL.indexOf('ВСТАВИТЬ') === 0) return;
 
-  // Показываем кнопку и вешаем на неё ссылку
-  const btn = document.getElementById('btn-send-form');
-  if(btn){
-    btn.style.display = 'inline-flex';
-    btn.onclick = function(){ window.open(url, '_blank'); };
-  }
+  const payload = {
+    fio:          userData.fio,
+    organization: userData.org,
+    city:         userData.city || '',
+    correct:      correctCount,
+    total:        questions.length,
+    percent:      pct,
+    level:        badge
+  };
+
+  // Отправка «best effort» — ошибки тихо игнорируем,
+  // участник в любом случае увидит сертификат.
+  try {
+    fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  } catch(e){}
 }
 
 function showResults(){
