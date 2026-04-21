@@ -318,7 +318,7 @@ body{font-family:'Raleway',sans-serif;background:var(--navy);min-height:100vh;ov
       <input id="f-org" class="reg-input" placeholder="Рязанский институт МПУ" maxlength="120">
     </div>
     <div class="reg-field">
-      <label class="reg-label">Электронная почта</label>
+      <label class="reg-label">Электронная почта *</label>
       <input id="f-email" class="reg-input" type="email" placeholder="example@mail.ru" maxlength="80">
     </div>
     <div class="reg-field">
@@ -668,12 +668,15 @@ function showReg(){show('reg-screen');}
 function startQuiz(){
   const fio=document.getElementById('f-fio').value.trim();
   const org=document.getElementById('f-org').value.trim();
-  if(!fio||!org){
+  const email=document.getElementById('f-email').value.trim();
+  const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!fio||!org||!email||!emailRe.test(email)){
     if(!fio){document.getElementById('f-fio').style.borderColor='#c9972b';document.getElementById('f-fio').focus();}
-    else{document.getElementById('f-org').style.borderColor='#c9972b';document.getElementById('f-org').focus();}
+    else if(!org){document.getElementById('f-org').style.borderColor='#c9972b';document.getElementById('f-org').focus();}
+    else{document.getElementById('f-email').style.borderColor='#c9972b';document.getElementById('f-email').focus();}
     return;
   }
-  userData={fio,org,email:document.getElementById('f-email').value.trim(),city:document.getElementById('f-city').value.trim()};
+  userData={fio,org,email,city:document.getElementById('f-city').value.trim()};
   currentQ=0;correctCount=0;wrongCount=0;
   show('quiz-screen');renderQuestion();
 }
@@ -752,7 +755,7 @@ function nextQuestion(){
 // ── ОТПРАВКА РЕЗУЛЬТАТОВ В GOOGLE ТАБЛИЦУ (через Apps Script) ──
 // ВНИМАНИЕ: вставьте сюда URL вашего веб-приложения Apps Script
 // (из шага 4 инструкции, ссылка вида https://script.google.com/macros/s/.../exec)
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwY0yGKGgydTed4F-yxozsUX0Fp7h2mJ-O52tSMkSSQriodWRRyU1gxts3QJ6Qq7oSzHg/exec';
+const SHEETS_URL = 'ВСТАВИТЬ_СЮДА_URL_APPS_SCRIPT';
 
 function sendResults(pct, badge){
   // Если URL не настроен — тихо выходим
@@ -761,6 +764,7 @@ function sendResults(pct, badge){
   const payload = {
     fio:          userData.fio,
     organization: userData.org,
+    email:        userData.email || '',
     city:         userData.city || '',
     correct:      correctCount,
     total:        questions.length,
